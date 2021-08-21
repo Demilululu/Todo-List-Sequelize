@@ -10,24 +10,24 @@ app.engine('hbs', exphbs({ defaultLayout: 'main', extname: '.hbs' }))
 app.set('view engine', 'hbs')
 app.use(methodOverride('_method'))
 
+app.get('/', (req, res) => {
+  res.render('index')
+})
+
 app.get('/login', (req, res) => {
-  app.render('login')
+  res.render('login')
 })
 
 app.get('/register', (req, res) => {
-  app.render('register')
-})
-
-app.get('/', (req, res) => {
-  app.render('index')
+  res.render('register')
 })
 
 app.get('/new', (req, res) => {
-  app.render('new')
+  res.render('new')
 })
 
 app.get('/edit', (req, res) => {
-  app.render('edit')
+  res.render('edit')
 })
 
 app.listen(PORT, () => {
