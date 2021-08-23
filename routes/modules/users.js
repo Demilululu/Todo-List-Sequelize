@@ -6,19 +6,6 @@ const router = express.Router()
 
 const db = require('../../models')
 const User = db.User
-const Todo = db.Todo
-
-
-// Login
-router.get('/login', (req, res) => {
-  res.render('login')
-})
-
-router.post('/login', passport.authenticate('local', {
-  successRedirect: '/',
-  failureRedirect: '/users/login'
-}))
-
 
 // Register
 router.get('/register', (req, res) => {
@@ -27,6 +14,7 @@ router.get('/register', (req, res) => {
 
 router.post('/register', (req, res) => {
   const { name, email, password, confirmPassword } = req.body
+  
   // check email 
   User.findOne({ where: { email } })
     .then(user => {
@@ -46,6 +34,25 @@ router.post('/register', (req, res) => {
     .then(() => res.redirect('/'))
     .catch(error => console.log(error))
 })
+
+// Login
+router.get('/login', (req, res) => {
+  res.render('login')
+})
+
+router.post('/login', passport.authenticate('local', {
+  successRedirect: '/',
+  failureRedirect: '/users/login'
+}))
+
+
+//Logout
+router.get('/logout', (req, res)=> {
+  req.logOut()
+  req.flash('success_msg', '你已成功登出!')
+  res.redirect('/users/login')
+})
+
 
 
 module.exports = router
