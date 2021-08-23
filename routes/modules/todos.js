@@ -5,6 +5,21 @@ const db = require('../../models')
 const User = db.User
 const Todo = db.Todo
 
+// New Todo
+router.get('/new', (req, res) => {
+  res.render('new')
+})
+
+router.post('/', (req, res) => {
+  const name = req.body.name
+  const UserId = req.user.id
+  console.log(name)
+  console.log(UserId)
+
+  return Todo.create({ name, UserId })
+    .then(() => res.redirect('/'))
+    .catch(error => console.log(error))
+})
 
 // Detail page
 router.get('/:id', (req, res) => {
@@ -16,26 +31,44 @@ router.get('/:id', (req, res) => {
 })
 
 
-// New Todo
-router.get('/new', (req, res) => {
-  res.render('new')
-})
-
-router.post('/', (res, req) => {
-  const name = req.body.name
-  const UserId = req.user.id
-  
-  return Todo.create({name, UserId})
-  .then(()=> res.direct('/'))
-  .catch(error => console.log(error))
-})
 
 // Edit Todo
-router.get('/edit', (req, res) => {
-  res.render('edit')
+router.get('/:id/edit', (req, res) => {
+  const id = req.params.id
+  const UserId = req.user.id
+
+  return Todo.findOne({ where: { id, UserId } })
+    .then(todo => res.render('edit', { todo: todo.get() }))
+    .catch(error => console.log(error))
 })
 
+router.put('/:id', (req, res) => {
+  const id = req.params.id
+  const UserId = req.user.id
+  const { name, isDone } = req.body
+
+  return Todo.findOne({ where: { id, UserId } })
+    .then(todo => {
+      todo.name = name
+      todo.isDone = isDone === 'on'
+      return todo.save()
+    })
+    .then(() => res.redirect(`/todos/${id}`))
+    .catch(error => console.log(error))
+})
+
+
 //Delete Todo
+router.delete('/:id', (req, res) => {
+  const id = req.params.id
+  const UserId = req.user.id
+
+  return Todo.findOne({ where: { id, UserId } })
+    .then(todo => todo.destroy())
+    .then(res.redirect('/'))
+    .catch(error => console.log(error))
+
+})
 
 
 
