@@ -14,7 +14,7 @@ router.get('/register', (req, res) => {
 
 router.post('/register', (req, res) => {
   const { name, email, password, confirmPassword } = req.body
-  
+
   // check email 
   User.findOne({ where: { email } })
     .then(user => {
@@ -47,8 +47,8 @@ router.post('/login', passport.authenticate('local', {
 
 
 //Logout
-router.get('/logout', (req, res)=> {
-  req.logOut()
+router.get('/logout', (req, res) => {
+  req.logout()
   req.flash('success_msg', '你已成功登出!')
   res.redirect('/users/login')
 })

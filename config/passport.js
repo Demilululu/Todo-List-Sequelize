@@ -1,15 +1,19 @@
 const passport = require('passport')
-const LocalStrategy = require('passport-local').Strategy
 const bcrypt = require('bcryptjs')
+
 const db = require('../models')
 const User = db.User
+const LocalStrategy = require('passport-local').Strategy
 
-module.exports = app => {
+module.exports = (app) => {
   app.use(passport.initialize())
   app.use(passport.session())
 
   // Local Strategy
-  passport.use(new LocalStrategy({ usernameField: 'email', passReqToCallback: true }, (req, email, password, done) => {
+  passport.use(new LocalStrategy({ 
+    usernameField: 'email', 
+    passReqToCallback: true 
+  }, (req, email, password, done) => {
     User.findOne({ where: { email } })
       .then(user => {
         if (!user) {
@@ -34,6 +38,7 @@ module.exports = app => {
       .then((user) => {
         user = user.toJSON()
         done(null, user)
-      }).catch(err => done(err, null))
+      })
+      .catch(err => done(err, null))
   })
 }
